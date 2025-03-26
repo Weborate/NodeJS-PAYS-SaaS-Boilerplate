@@ -2,6 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import helmet from 'helmet'
 import compression from 'compression'
+import expressLayouts from 'express-ejs-layouts'
 import { auth } from './config/auth.js'
 import { router as authRouter } from './routes/auth.js'
 import { router as paymentRouter } from './routes/payment.js'
@@ -22,7 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 app.set('trust proxy', true)
 
 app.use(session({
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -32,9 +33,13 @@ app.use(session({
   }
 }))
 
-// View engine
+// View engine setup
+app.use(expressLayouts)
 app.set('view engine', 'ejs')
 app.set('views', './src/views')
+app.set('layout', 'layout')
+app.set("layout extractScripts", true)
+app.set("layout extractStyles", true)
 
 // Routes
 app.use('/auth', authRouter)
@@ -44,7 +49,10 @@ app.use('/', mainRouter)
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack)
-  res.status(500).render('error', { error: err })
+  res.status(500).render('error', { 
+    error: err,
+    title: 'Error'
+  })
 })
 
 const PORT = process.env.PORT || 3000
