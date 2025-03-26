@@ -26,6 +26,7 @@
         </div>
 
         <form action="/api/auth/signin/email" method="POST" class="space-y-4">
+            <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                 <input type="email" name="email" id="email" required

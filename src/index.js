@@ -17,10 +17,19 @@ app.use(helmet())
 app.use(compression())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// Trust proxy for HTTPS
+app.set('trust proxy', true)
+
 app.use(session({
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+  }
 }))
 
 // View engine
@@ -29,7 +38,7 @@ app.set('views', './src/views')
 
 // Routes
 app.use('/auth', authRouter)
-app.use('/payment', paymentRouter)
+app.use('/api/payments', paymentRouter)
 app.use('/', mainRouter)
 
 // Error handling
@@ -38,6 +47,7 @@ app.use((err, req, res, next) => {
   res.status(500).render('error', { error: err })
 })
 
-app.listen(3000, () => {
-  console.log(`Server is running on port ${process.env.APP_PORT}`)
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
 }) 
