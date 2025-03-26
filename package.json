@@ -1,7 +1,7 @@
 {
   "name": "api-product-frontend",
   "version": "1.0.0",
-  "description": "Frontend for API product with authentication and payments",
+  "description": "Frontend for SaaS product with authentication and payments",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
