@@ -2,9 +2,8 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:20-alpine
+    working_dir: /app
     ports:
       - "${APP_PORT}:3000"
     environment:
@@ -17,20 +16,20 @@ services:
       - db
     volumes:
       - .:/app
-      - /app/node_modules
     env_file:
       - .env
+    command: sh -c "npm install && npm start"
 
   db:
     image: mariadb:latest
     environment:
-      - MARIADB_DATABASE: ${DB_NAME}
-      - MARIADB_USER: ${DB_USER}
-      - MARIADB_PASSWORD: ${DB_PASSWORD}
-      - MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      - MYSQL_MAX_CONNECTIONS: 1000
-      - SERVICE_TAGS: ${PROJECT_ENV}
-      - SERVICE_NAME: mariadb
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_MAX_CONNECTIONS=1000
+      - SERVICE_TAGS=${NODE_ENV}
+      - SERVICE_NAME=mariadb
     ports:
       - "3306:3306"
     volumes:

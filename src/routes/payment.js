@@ -2,7 +2,7 @@ import express from 'express'
 import Stripe from 'stripe'
 import { auth } from '../middleware/auth.js'
 import pool from '../config/database.js'
-import { sendPaymentConfirmation } from '../services/mailgun.js'
+import { sendPaymentConfirmation } from '../services/email.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
