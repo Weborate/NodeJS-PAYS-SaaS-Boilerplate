@@ -1,6 +1,6 @@
 import express from 'express'
 import Stripe from 'stripe'
-import { auth } from '../middleware/auth.js'
+import { authenticatedUser } from '../middleware/auth.js'
 import pool from '../config/database.js'
 import { sendPaymentConfirmation } from '../services/email.js'
 import dotenv from 'dotenv'
@@ -11,11 +11,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 export const router = express.Router()
 
-router.get('/top-up', auth, (req, res) => {
+router.get('/top-up', authenticatedUser, (req, res) => {
   res.render('payment/top-up', { title: 'Top Up Balance' })
 })
 
-router.post('/create-payment-intent', auth, async (req, res) => {
+router.post('/create-payment-intent', authenticatedUser, async (req, res) => {
   try {
     const { amount } = req.body
     const paymentIntent = await stripe.paymentIntents.create({

@@ -1,9 +1,11 @@
 import { getSession } from "@auth/express"
+import { authConfig } from "../config/authConfig.js"
 
-export const auth = async (req, res, next) => {
-  const session = await getSession(req)
+export async function authenticatedUser(req, res, next) {
+  const session = res.locals.session ?? (await getSession(req, authConfig))
   if (!session?.user) {
-    return res.redirect('/auth/login')
+    res.redirect("/login")
+  } else {
+    next()
   }
-  next()
-} 
+}

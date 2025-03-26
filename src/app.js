@@ -1,38 +1,22 @@
 import express from 'express'
-import session from 'express-session'
 import helmet from 'helmet'
+import { helmetConfig } from './config/contentSecurityPolicy.js'
 import compression from 'compression'
+import { ExpressAuth } from "@auth/express"
 import expressLayouts from 'express-ejs-layouts'
-import { auth } from './config/auth.js'
-import { router as authRouter } from './routes/auth.js'
+import { authConfig } from './config/authConfig.js'
 import { router as paymentRouter } from './routes/payment.js'
 import { router as mainRouter } from './routes/main.js'
 import dotenv from 'dotenv'
-
 dotenv.config()
 
 const app = express()
 
 // Middleware
-app.use(helmet())
+app.use(helmet(helmetConfig))
 app.use(compression())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-// Trust proxy for HTTPS
-app.set('trust proxy', true)
-
-app.use(session({
-  secret: process.env.NEXTAUTH_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-  }
-}))
-
 // View engine setup
 app.use(expressLayouts)
 app.set('view engine', 'ejs')
@@ -40,9 +24,12 @@ app.set('views', './src/views')
 app.set('layout', 'layout')
 app.set("layout extractScripts", true)
 app.set("layout extractStyles", true)
+// If app is served through a proxy, trust the proxy to allow HTTPS protocol to be detected
+// https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', true)
 
 // Routes
-app.use('/auth', authRouter)
+app.use("/auth/*", ExpressAuth(authConfig))
 app.use('/api/payments', paymentRouter)
 app.use('/', mainRouter)
 
