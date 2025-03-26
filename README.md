@@ -1,13 +1,13 @@
-# API Product Frontend
+# Node.js pay-as-you-go SaaS boilerplate
 
-A Node.js pay-as-you-go SaaS boilerplate with authentication and payment integration.
+A simple SaaS boilerplate with authentication and payment integration.
 
 ## Features
 
+- Simple (no Next.js or React, just simple Express)
 - User authentication with Email (magic link), Google, and GitHub
 - Payment processing with Stripe
-- Modern UI with Tailwind CSS
-- MariaDB database integration
+- MariaDB database
 
 ## Prerequisites
 
